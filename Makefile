@@ -2,7 +2,7 @@ VERSION  = 1.16.0
 CMD      = /usr/bin/docker
 IMAGE    = mogeko/trojan
 
-.PHONY: all build run rund help
+.PHONY: all build run test help
 
 all: build run
 
@@ -16,8 +16,8 @@ run:
 	@-$(CMD) run -it --name trojan-$(id) $(IMAGE)
 	@$(CMD) rm -f trojan-$(id)
 
-rund: id := $(shell head -200 /dev/urandom | cksum | cut -f1 -d " ")
-rund:
+test: id := $(shell head -200 /dev/urandom | cksum | cut -f1 -d " ")
+test:
 	@-$(CMD) run -d --name trojan-$(id) $(IMAGE)
 	@$(CMD) rm -f trojan-$(id)
 
