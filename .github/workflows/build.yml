@@ -31,4 +31,4 @@ jobs:
         run: |
           RUN_ID=$(head -200 /dev/urandom | cksum | cut -f1 -d " ")
           docker run -d --name trojan-${RUN_ID} mogeko/trojan:latest
-	        docker rm -f trojan-${RUN_ID}
+          docker rm -f trojan-${RUN_ID}
