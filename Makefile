@@ -1,4 +1,5 @@
-VERSION  = 1.16.0
+VERSION  = $(shell jq -r '.version' ./latest.json)
+
 CMD      = /usr/bin/docker
 IMAGE    = mogeko/trojan
 
