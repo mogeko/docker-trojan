@@ -11,9 +11,9 @@ ARG TROJAN_GIT=https://github.com/trojan-gfw/trojan.git
 RUN git clone --depth 1 --recurse-submodules -b v${TROJAN_VERSION} ${TROJAN_GIT} .
 RUN cmake . -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_COMPILER=clang++ \
-        -DCMAKE_C_COMPILER=clang \
         -DCMAKE_INSTALL_PREFIX=/workspace/pkg \
         -DDEFAULT_CONFIG=/config/config.json \
+        -DFORCE_TCP_FASTOPEN=ON \
         -G Ninja \
     && ninja -j$(nproc) \
     && ninja install
