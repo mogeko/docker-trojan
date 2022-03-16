@@ -1,0 +1,98 @@
+name: update-bot
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '30 24 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      trojan_ver: ${{ steps.check_ver.outputs.qbt_ver }}
+      img_ver: ${{ steps.check_ver.outputs.img_ver }}
+      is_new: ${{ steps.check_ver.outputs.is_new }}
+      latest: ${{ steps.check_ver.outputs.latest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check version
+        id: check_ver
+        run: |
+          OLD_VER=$(curl -s "${GHCR_URL}" | grep -Po "(\d+\.){2}\d+-r\d+" | head -1)
+          NEW_TAG=$(curl -s "${REPO_TAGS}" | grep -Po "(\d+\.){2}\d+\.zip" | head -1)
+          TROJAN_VER=$(jq -r '.version' ./latest.json)
+          PKG_REL=$(jq -r '.pkgrel' ./latest.json)
+          if [ ${{ github.event_name }} == 'push' ]; then
+            IMG_VER="${TROJAN_VER}-r${PKG_REL}"
+          else
+            echo "::set-output name=latest::type=raw,latest"
+            TROJAN_VER="${NEW_TAG%.zip}"
+            IMG_VER="${TROJAN_VER}-r0"
+          fi
+          IS_NEW=$([[ "${IMG_VER}" != "${OLD_VER}" ]] && echo "yes" || echo "no")
+          echo "::set-output name=trojan_ver::${TROJAN_VER}"
+          echo "::set-output name=img_ver::${IMG_VER}"
+          echo "::set-output name=is_new::${IS_NEW}"
+        env:
+          GHCR_URL: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
+          REPO_TAGS: https://github.com/trojan-gfw/trojan/tags
+
+  build:
+    runs-on: ubuntu-latest
+    needs: check
+    if: ${{ needs.check.outputs.is_new == 'yes' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1.14.1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1.14.1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.6.2
+        with:
+          images: |
+            ${{ github.repository_owner }}/trojan
+            ghcr.io/${{ github.repository_owner }}/trojan
+          tags: |
+            type=edge
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=raw,${{ needs.check.outputs.img_ver }}
+            ${{ needs.check.outputs.latest }}
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v2.10.0
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            TROJAN_VERSION=${{ needs.check.outputs.trojan_ver }}
+      - name: Save metadata
+        run: echo ${{ toJSON(steps.build.outputs.metadata) }} > ${{ github.workspace }}/meta.json
+
+      - name: Update metadata
+        uses: actions/upload-artifact@v2
+        with:
+          name: metadata
+          path: ${{ github.workspace }}/meta.json
