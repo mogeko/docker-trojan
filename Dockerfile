@@ -24,13 +24,15 @@ RUN apk add --no-cache --virtual .trojan-rundeps \
         libstdc++ boost-system boost-program_options mariadb-connector-c
 
 COPY --from=trojan_builder /workspace/pkg /usr
-COPY --from=trojan_builder /workspace/pkg/etc/trojan /config
+ADD --chown=1000:100 root /
 
 RUN test -f /usr/bin/trojan \
-    && /usr/bin/trojan -v
+    && /usr/bin/trojan --version
 
 VOLUME [ "/config" ]
 
-ENTRYPOINT [ "/usr/bin/trojan" ]
+# ENTRYPOINT [ "/usr/bin/trojan" ]
 
-CMD [ "--config", "/config/config.json" ]
+# CMD [ "--config", "/config/config.json" ]
+
+ENTRYPOINT [ "sh" ]
