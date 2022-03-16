@@ -11,7 +11,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      trojan_ver: ${{ steps.check_ver.outputs.qbt_ver }}
+      trojan_ver: ${{ steps.check_ver.outputs.trojan_ver }}
       img_ver: ${{ steps.check_ver.outputs.img_ver }}
       is_new: ${{ steps.check_ver.outputs.is_new }}
       latest: ${{ steps.check_ver.outputs.latest }}
