@@ -44,6 +44,8 @@ RUN test -f /usr/bin/trojan \
     && /usr/bin/trojan --version \
     && /usr/bin/trojan --test /config/config.json
 
+EXPOSE 80 80/udp 443 443/udp
+
 VOLUME [ "/config", "/config/ssl" ]
 
 ENTRYPOINT [ "/usr/bin/trojan" ]
