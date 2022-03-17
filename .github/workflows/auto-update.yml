@@ -43,14 +43,13 @@ jobs:
             echo "::set-output name=edge::type=edge"
             echo "::set-output name=sha::type=raw,${HEAD_SHA:0:7}"
             echo "::set-output name=trojan_ver::master"
-          elif [[ ! ${IMG_TAG} =~ ${IMG_VER} ]]; then
+          fi
+          if [[ ! ${IMG_TAG} =~ ${IMG_VER} ]]; then
             echo "::set-output name=is_new::yes"
             echo "::set-output name=latest::type=raw,latest"
             echo "::set-output name=img_ver::type=raw,${IMG_VER}"
             echo "::set-output name=sha::type=raw,${TAG_SHA:0:7}"
             echo "::set-output name=trojan_ver::${TROJAN_VER}"
-          else
-            echo "::set-output name=is_new::no"
           fi
         env:
           GHCR_URL: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
