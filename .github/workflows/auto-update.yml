@@ -45,7 +45,7 @@ jobs:
             echo "::set-output name=sha::type=raw,${HEAD_SHA:0:7}"
             echo "::set-output name=trojan_ver::master"
           fi
-          if [[ ! ${IMG_TAG} =~ ${IMG_VER} || ! ${IMG_TAG} =~ ${TAG_SHA:0:7} ]]; then
+          if [[ ! ${IMG_TAGS} =~ ${IMG_VER} ]]; then
             echo "::set-output name=is_new::yes"
             echo "::set-output name=latest::type=raw,latest"
             echo "::set-output name=img_ver::type=raw,${IMG_VER}"
@@ -53,7 +53,7 @@ jobs:
             echo "::set-output name=trojan_ver::${TROJAN_VER}"
           fi
         env:
-          GHCR_URL: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
+          GHCR_URL: https://github.com/mogeko/docker-trojan/pkgs/container/trojan/versions
           API_REPO_TAGS: https://api.github.com/repos/trojan-gfw/trojan/tags
           API_REPO_REFS: https://api.github.com/repos/trojan-gfw/trojan/git/refs
 
