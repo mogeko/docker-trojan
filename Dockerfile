@@ -8,7 +8,7 @@ WORKDIR /workspace
 
 ARG TROJAN_VERSION
 ARG TROJAN_GIT=https://github.com/trojan-gfw/trojan.git
-RUN git clone --depth 1 --recurse-submodules -b v${TROJAN_VERSION} ${TROJAN_GIT} .
+RUN git clone --depth 1 --recurse-submodules -b ${TROJAN_VERSION} ${TROJAN_GIT} .
 RUN cmake . -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_COMPILER=clang++ \
         -DCMAKE_INSTALL_PREFIX=/workspace/pkg \
