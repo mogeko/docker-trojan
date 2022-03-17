@@ -15,6 +15,8 @@ jobs:
       img_ver: ${{ steps.check_ver.outputs.img_ver }}
       is_new: ${{ steps.check_ver.outputs.is_new }}
       latest: ${{ steps.check_ver.outputs.latest }}
+      edge: ${{ steps.check_ver.outputs.edge }}
+      sha: ${{ steps.check_ver.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,24 +26,36 @@ jobs:
       - name: Check version
         id: check_ver
         run: |
-          OLD_VER=$(curl -s "${GHCR_URL}" | grep -Po "(\d+\.){2}\d+-r\d+" | head -1)
-          NEW_TAG=$(curl -s "${REPO_TAGS}" | grep -Po "(\d+\.){2}\d+\.zip" | head -1)
+          IMG_TAGS=$(curl -s "${GHCR_URL}" | grep -Po "tag=(\w|\.|-r)+" | cut -d '=' -f 2)
+          NEW_TAG=$(curl -s "${API_REPO_TAGS}" | jq -r '.[0].name')
+          HEAD_SHA=$(curl -s "${API_REPO_REFS}/heads/master" | jq -r '.object.sha')
+          TAG_SHA=$(curl -s "${API_REPO_REFS}/tags/${NEW_TAG}" | jq -r '.object.sha')
           TROJAN_VER=$(jq -r '.version' ./latest.json)
           PKG_REL=$(jq -r '.pkgrel' ./latest.json)
-          if [ ${{ github.event_name }} == 'push' ]; then
+          if [[ ${{ github.event_name }} == 'push' ]]; then
             IMG_VER="${TROJAN_VER}-r${PKG_REL}"
           else
-            echo "::set-output name=latest::type=raw,latest"
             TROJAN_VER="${NEW_TAG%.zip}"
-            IMG_VER="${TROJAN_VER}-r0"
+            IMG_VER="${TROJAN_VER#v}-r0"
           fi
-          IS_NEW=$([[ "${IMG_VER}" != "${OLD_VER}" ]] && echo "yes" || echo "no")
-          echo "::set-output name=trojan_ver::${TROJAN_VER}"
-          echo "::set-output name=img_ver::${IMG_VER}"
-          echo "::set-output name=is_new::${IS_NEW}"
+          if [[ ! ${IMG_TAGS} =~ ${HEAD_SHA:0:7} ]]; then
+            echo "::set-output name=is_new::yes"
+            echo "::set-output name=edge::type=edge"
+            echo "::set-output name=sha::type=raw,${HEAD_SHA:0:7}"
+            echo "::set-output name=trojan_ver::master"
+          elif [[ ! ${IMG_TAG} =~ ${IMG_VER} ]]; then
+            echo "::set-output name=is_new::yes"
+            echo "::set-output name=latest::type=raw,latest"
+            echo "::set-output name=img_ver::type=raw,${IMG_VER}"
+            echo "::set-output name=sha::type=raw,${TAG_SHA:0:7}"
+            echo "::set-output name=trojan_ver::${TROJAN_VER}"
+          else
+            echo "::set-output name=is_new::no"
+          fi
         env:
           GHCR_URL: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
-          REPO_TAGS: https://github.com/trojan-gfw/trojan/tags
+          API_REPO_TAGS: https://api.github.com/repos/trojan-gfw/trojan/tags
+          API_REPO_REFS: https://api.github.com/repos/trojan-gfw/trojan/git/refs
 
   build:
     runs-on: ubuntu-latest
@@ -74,10 +88,11 @@ jobs:
             ${{ github.repository_owner }}/trojan
             ghcr.io/${{ github.repository_owner }}/trojan
           tags: |
-            type=edge
             type=schedule,pattern={{date 'YYYYMMDD'}}
-            type=raw,${{ needs.check.outputs.img_ver }}
+            ${{ needs.check.outputs.img_ver }}
             ${{ needs.check.outputs.latest }}
+            ${{ needs.check.outputs.edge }}
+            ${{ needs.check.outputs.sha }}
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v2.10.0

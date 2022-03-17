@@ -1,6 +1,6 @@
 # docker-trojan
 
-[![ci_icon]][ci_link] [![image_size]][docker_link] [![image_ver]][docker_link] [![unstable]][docker_link]
+[![ci_icon]][ci_link] [![image_size]][docker_link] [![image_ver]][docker_link]
 
 Docker image for trojan. 
 
@@ -76,7 +76,6 @@ The code in this project is released under the [GPL-3.0 License][license].
 [ci_icon]: https://github.com/mogeko/docker-trojan/actions/workflows/auto-update.yml/badge.svg
 [image_size]: https://img.shields.io/docker/image-size/mogeko/trojan/latest?logo=docker
 [image_ver]: https://img.shields.io/docker/v/mogeko/trojan/latest?label=latest&logo=docker
-[unstable]: https://img.shields.io/docker/v/mogeko/trojan?label=edge&logo=docker
 
 <!-- links -->
 [ci_link]: https://github.com/mogeko/docker-trojan/actions/workflows/auto-update.yml
