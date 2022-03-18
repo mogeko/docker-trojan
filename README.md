@@ -20,6 +20,11 @@ Run with docker cli:
 ```shell
 docker run -d \
   --name trojan \
+  -e ENVSUBST_ENABLED=true \
+  -e TROJAN_LOCALE_ADDR=0.0.0.0 \
+  -e TROJAN_LOCALE_PORT=443 \
+  -e TROJAN_REMOTE_ADDR=127.0.0.1 \
+  -e TROJAN_REMOTE_PORT=80 \
   -p 443:443 \
   -p 443:443/udp \
   -p 80:80 \
@@ -39,6 +44,12 @@ services:
   trojan:
     image: ghcr.io/mogeko/trojan
     container_name: trojan
+    environment:
+      - ENVSUBST_ENABLED=true
+      - TROJAN_LOCALE_ADDR=0.0.0.0
+      - TROJAN_LOCALE_PORT=443
+      - TROJAN_REMOTE_ADDR=127.0.0.1
+      - TROJAN_REMOTE_PORT=80
     volumes:
       - /path/to/config:/config
       - /path/for/ssl/files:/config/ssl
