@@ -45,14 +45,17 @@ COPY --from=ssl_maker /workspace /config/ssl
 COPY --from=gettext /usr/bin/envsubst /usr/bin/envsubst
 ADD --chown=1000:100 root /
 
-ENV TROJAN_SSL_CERT=/config/ssl/certificate.crt \
+ENV ENVSUBST_ENABLED=false \
+    TROJAN_SSL_CERT=/config/ssl/certificate.crt \
     TROJAN_SSL_KEY=/config/ssl/private.key
 
 # Test the trojan
 RUN test -f /usr/bin/trojan \
     && /usr/bin/trojan --version \
     && tmpfile=$(mktemp) \
-    && TROJAN_CONFIG=${tmpfile} /run.sh --test ${tmpfile}
+    && ENVSUBST_ENABLED=true TROJAN_CONFIG=${tmpfile} \
+        /run.sh --test ${tmpfile} \
+    && /run.sh --test /config/config.json
 
 EXPOSE 80 80/udp 443 443/udp
 
