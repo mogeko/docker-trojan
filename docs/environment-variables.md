@@ -4,7 +4,7 @@ It is a list of all available `TROJAN_*` environment variables we supported, and
 
 | environment variables             | default   | location                      | description                                                                                                                                               |
 |-----------------------------------|-----------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ENVSUBST_ENABLED`                | true      | N/A                           | Whether to turn on.`envsubst`                                                                                                                             |
+| `ENVSUBST_ENABLED`                | false     | N/A                           | Whether to turn on.`envsubst`                                                                                                                             |
 | `TROJAN_LOCALE_ADDR`              | 0.0.0.0   | `.local_addr`                 | trojan server will be bound to the specified interface. Feel free to change this to :: or other addresses, if you know what you are doing.                |
 | `TROJAN_LOCALE_PORT`              | 443       | `.local_port`                 | trojan server will be bound to this port                                                                                                                  |
 | `TROJAN_REMOTE_ADDR`              | 127.0.0.1 | `.remote_addr`                | the endpoint address that trojan server will connect to when encountering [other protocols][other-protocols]                                              |
