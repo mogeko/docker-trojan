@@ -2,7 +2,7 @@
 
 [![ci_icon]][ci_link] [![image_size]][docker_link] [![image_ver]][docker_link]
 
-Docker image for trojan. 
+Docker image for [trojan][repo_link].
 
 - Tiny size
 - Keep updating
@@ -20,6 +20,11 @@ Run with docker cli:
 ```shell
 docker run -d \
   --name trojan \
+  -e ENVSUBST_ENABLED=true \
+  -e TROJAN_LOCALE_ADDR=0.0.0.0 \
+  -e TROJAN_LOCALE_PORT=443 \
+  -e TROJAN_REMOTE_ADDR=127.0.0.1 \
+  -e TROJAN_REMOTE_PORT=80 \
   -p 443:443 \
   -p 443:443/udp \
   -p 80:80 \
@@ -39,6 +44,12 @@ services:
   trojan:
     image: ghcr.io/mogeko/trojan
     container_name: trojan
+    environment:
+      - ENVSUBST_ENABLED=true
+      - TROJAN_LOCALE_ADDR=0.0.0.0
+      - TROJAN_LOCALE_PORT=443
+      - TROJAN_REMOTE_ADDR=127.0.0.1
+      - TROJAN_REMOTE_PORT=80
     volumes:
       - /path/to/config:/config
       - /path/for/ssl/files:/config/ssl
@@ -51,8 +62,10 @@ services:
 ```
 
 ## Parameters
-<!-- TODO -->
-The path of the default configuration file is `/config/config.json` (in container). You can configure it according to your needs. By the way, if you don't want to use the default configuration file path, you can overwrite it by a parameter transmitted to `trojan`:
+
+We support the use of environment variables `TROJAN_*` to automatic settings configuration file[^1]. You need to turn it on (default off) through environment variables `ENVSUBST_ENABLE=true`. When it is turned on, we will use the environment variable and template, automatically generate`/config/config.json` by `envsubst`. Original `/config/config.json` will be overwritten. **Therefore, it CANNOT be compatible with manually set configuration files, and it may overwrite your profile.** Click [here][environment-variables] to view the full list of `TROJAN_*`.
+
+Although I recommend setting up a configuration file using environment variables[^2], we also support it manually. The path of the default configuration file is `/config/config.json` (in container). You can configure it according to your needs. By the way, if you don't want to use the default configuration file path, you can overwrite it by a parameter transmitted to `trojan`:
 
 ```shell
 docker run [do something] ghcr.io/mogeko/trojan -c /path/to/config (in container)
@@ -70,6 +83,10 @@ docker run -it ghcr.io/mogeko/trojan --help
 
 The code in this project is released under the [GPL-3.0 License][license].
 
+<!-- footnote -->
+
+[^1]: Generate a configuration file from template by `envsubst`.
+[^2]: WARNING: It may override your profile.
 
 <!-- badge -->
 
@@ -78,7 +95,9 @@ The code in this project is released under the [GPL-3.0 License][license].
 [image_ver]: https://img.shields.io/docker/v/mogeko/trojan/latest?label=latest&logo=docker
 
 <!-- links -->
+[repo_link]: https://github.com/trojan-gfw/trojan
 [ci_link]: https://github.com/mogeko/docker-trojan/actions/workflows/auto-update.yml
 [docker_link]: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
 [docker-compose]: https://docs.docker.com/compose
 [license]: https://github.com/mogeko/docker-trojan/blob/master/LICENSE
+[environment-variables]: https://github.com/mogeko/docker-trojan/blob/master/docs/environment-variables.md
