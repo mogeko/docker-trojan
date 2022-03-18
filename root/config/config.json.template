@@ -1,0 +1,46 @@
+{
+    "run_type": "server",
+    "local_addr": "${TROJAN_LOCALE_ADDR}",
+    "local_port": ${TROJAN_LOCALE_PORT},
+    "remote_addr": "${TROJAN_REMOTE_ADDR}",
+    "remote_port": ${TROJAN_REMOTE_PORT},
+    "password": ${TROJAN_PASSWORD},
+    "log_level": ${TROJAN_LOG_LEVEL},
+    "ssl": {
+        "cert": "${TROJAN_SSL_CERT}",
+        "key": "${TROJAN_SSL_KEY}",
+        "key_password": "${TROJAN_SSL_KEY_PASSWORD}",
+        "cipher": "${TROJAN_SSL_CIPHER}",
+        "cipher_tls13": "${TROJAN_SSL_CIPHER_TLS13}",
+        "prefer_server_cipher": ${TROJAN_SSL_PREFER_SERVER_CIPHER},
+        "alpn": ${TROJAN_SSL_ALPN},
+        "alpn_port_override": {
+            "h2": ${TROJAN_SSL_ALPN_PORT_OVERRIDE_H2}
+        },
+        "reuse_session": ${TROJAN_SSL_REUSE_SESSION},
+        "session_ticket": ${TROJAN_SSL_SESSION_TICKET},
+        "session_timeout": ${TROJAN_SSL_SESSION_TIMEOUT},
+        "plain_http_response": "${TROJAN_SSL_PLAIN_HTTP_RESPONSE}",
+        "curves": "${TROJAN_SSL_CURVES}",
+        "dhparam": "${TROJAN_SSL_DH_PARAM}"
+    },
+    "tcp": {
+        "prefer_ipv4": ${TROJAN_TCP_PREFER_IPV4},
+        "no_delay": ${TROJAN_TCP_NO_DELAY},
+        "keep_alive": ${TROJAN_TCP_KEEP_ALIVE},
+        "reuse_port": ${TROJAN_TCP_REUSE_PORT},
+        "fast_open": ${TROJAN_TCP_FAST_OPEN},
+        "fast_open_qlen": ${TROJAN_TCP_FAST_OPEN_QLEN}
+    },
+    "mysql": {
+        "enabled": ${TROJAN_MYSQL_ENABLED},
+        "server_addr": "${TROJAN_MYSQL_SERVER_ADDR}",
+        "server_port": ${TROJAN_MYSQL_SERVER_PORT},
+        "database": "${TROJAN_MYSQL_DATABASE}",
+        "username": "${TROJAN_MYSQL_USERNAME}",
+        "password": "${TROJAN_MYSQL_PASSWORD}",
+        "key": "${TROJAN_MYSQL_KEY}",
+        "cert": "${TROJAN_MYSQL_CERT}",
+        "ca": "${TROJAN_MYSQL_CA}"
+    }
+}

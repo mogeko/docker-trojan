@@ -2,7 +2,7 @@
 
 [![ci_icon]][ci_link] [![image_size]][docker_link] [![image_ver]][docker_link]
 
-Docker image for trojan. 
+Docker image for [trojan][repo_link]. 
 
 - Tiny size
 - Keep updating
@@ -78,6 +78,7 @@ The code in this project is released under the [GPL-3.0 License][license].
 [image_ver]: https://img.shields.io/docker/v/mogeko/trojan/latest?label=latest&logo=docker
 
 <!-- links -->
+[repo_link]: https://github.com/trojan-gfw/trojan
 [ci_link]: https://github.com/mogeko/docker-trojan/actions/workflows/auto-update.yml
 [docker_link]: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
 [docker-compose]: https://docs.docker.com/compose

@@ -30,24 +30,34 @@ RUN openssl req  -nodes -new -x509 -days 3650 \
         -keyout private.key -out certificate.crt \
         -subj "/C=CN/ST=Beijing/L=Beijing/O=Trojan-Gfw/OU=Trojan-Gfw/CN=Trojan-Gfw"
 
+FROM alpine:3.15.1 as gettext
+
+RUN apk add --no-cache gettext
+
 FROM alpine:3.15.1
 
 RUN apk add --no-cache --virtual .trojan-rundeps \
-        libstdc++ boost-system boost-program_options mariadb-connector-c
+        libstdc++ boost-system boost-program_options mariadb-connector-c \
+    && apk add --no-cache --virtual .envsubst-rundeps libintl
 
 COPY --from=trojan_builder /workspace/pkg /usr
 COPY --from=ssl_maker /workspace /config/ssl
+COPY --from=gettext /usr/bin/envsubst /usr/bin/envsubst
 ADD --chown=1000:100 root /
+
+ENV TROJAN_SSL_CERT=/config/ssl/certificate.crt \
+    TROJAN_SSL_KEY=/config/ssl/private.key
 
 # Test the trojan
 RUN test -f /usr/bin/trojan \
     && /usr/bin/trojan --version \
-    && /usr/bin/trojan --test /config/config.json
+    && tmpfile=$(mktemp) \
+    && TROJAN_CONFIG=${tmpfile} /run.sh --test ${tmpfile}
 
 EXPOSE 80 80/udp 443 443/udp
 
 VOLUME [ "/config", "/config/ssl" ]
 
-ENTRYPOINT [ "/usr/bin/trojan" ]
+ENTRYPOINT [ "/run.sh" ]
 
 CMD [ "--config", "/config/config.json" ]
