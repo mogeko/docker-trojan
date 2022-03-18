@@ -22,7 +22,7 @@
         "session_timeout": ${TROJAN_SSL_SESSION_TIMEOUT},
         "plain_http_response": "${TROJAN_SSL_PLAIN_HTTP_RESPONSE}",
         "curves": "${TROJAN_SSL_CURVES}",
-        "dhparam": "${TROJAN_SSL_DH_PARAM}"
+        "dhparam": "${TROJAN_SSL_DHPARAM}"
     },
     "tcp": {
         "prefer_ipv4": ${TROJAN_TCP_PREFER_IPV4},

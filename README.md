@@ -2,7 +2,7 @@
 
 [![ci_icon]][ci_link] [![image_size]][docker_link] [![image_ver]][docker_link]
 
-Docker image for [trojan][repo_link]. 
+Docker image for [trojan][repo_link].
 
 - Tiny size
 - Keep updating
@@ -51,8 +51,10 @@ services:
 ```
 
 ## Parameters
-<!-- TODO -->
-The path of the default configuration file is `/config/config.json` (in container). You can configure it according to your needs. By the way, if you don't want to use the default configuration file path, you can overwrite it by a parameter transmitted to `trojan`:
+
+We support the use of environment variables `TROJAN_*` to automatic settings configuration file[^1]. You need to turn it on (default off) through environment variables `ENVSUBST_ENABLE=true`. When it is turned on, we will use the environment variable and template, automatically generate`/config/config.json` by `envsubst`. Original `/config/config.json` will be overwritten. **Therefore, it CANNOT be compatible with manually set configuration files, and it may overwrite your profile.** Click [here][environment-variables] to view the full list of `TROJAN_*`.
+
+Although I recommend setting up a configuration file using environment variables[^2], we also support it manually. The path of the default configuration file is `/config/config.json` (in container). You can configure it according to your needs. By the way, if you don't want to use the default configuration file path, you can overwrite it by a parameter transmitted to `trojan`:
 
 ```shell
 docker run [do something] ghcr.io/mogeko/trojan -c /path/to/config (in container)
@@ -70,6 +72,10 @@ docker run -it ghcr.io/mogeko/trojan --help
 
 The code in this project is released under the [GPL-3.0 License][license].
 
+<!-- footnote -->
+
+[^1]: Generate a configuration file from template by `envsubst`.
+[^2]: WARNING: It may override your profile.
 
 <!-- badge -->
 
@@ -83,3 +89,4 @@ The code in this project is released under the [GPL-3.0 License][license].
 [docker_link]: https://github.com/mogeko/docker-trojan/pkgs/container/trojan
 [docker-compose]: https://docs.docker.com/compose
 [license]: https://github.com/mogeko/docker-trojan/blob/master/LICENSE
+[environment-variables]: https://github.com/mogeko/docker-trojan/blob/master/docs/environment-variables.md
