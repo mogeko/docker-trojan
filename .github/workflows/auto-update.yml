@@ -95,7 +95,7 @@ jobs:
             ${{ needs.check.outputs.sha }}
       - name: Build and push Docker image
         id: build
-        uses: docker/build-push-action@v2.10.0
+        uses: docker/build-push-action@v3.1.0
         with:
           context: .
           push: true
