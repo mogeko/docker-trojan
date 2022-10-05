@@ -1,0 +1,11 @@
+{
+  "name": "ghcr.io/mogeko/trojan",
+  "trojan_ver": "${TROJAN_VER}",
+  "edge": {
+    "sha": "${EDGE_SHA}"
+  },
+  "latest": {
+    "sha": "${LATEST_SHA}"
+  },
+  "timestamp": "${TIMESTAMP_UTC}"
+}
