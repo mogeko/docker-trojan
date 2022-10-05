@@ -42,7 +42,7 @@ jobs:
           export STATUS_LATEST_SHA=8606b7110fe79f8ab02d60c897f87ffb0a9b23f0
           export TROJAN_VER=$(curl -s "${API_REPO_TAGS}" | jq -r '.[0].name')
           export EDGE_SHA=$(curl -s "${API_REPO_REFS}/heads/master" | jq -r '.object.sha')
-          export LATEST_SHA=$(curl -s "${API_REPO_REFS}/tags/${NEW_TAG}" | jq -r '.object.sha')
+          export LATEST_SHA=$(curl -s "${API_REPO_REFS}/tags/${TROJAN_VER}" | jq -r '.object.sha')
           export TIMESTAMP_UTC=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
           envsubst < ./public/index.json.template > ./public/index.json
           rm -rf ./public/index.json.template
