@@ -1,6 +1,7 @@
-VERSION  = $(shell jq -r '.version' ./latest.json)
+API_STATUS_META = https://mogeko.github.io/docker-trojan/
+TROJAN_VERSION  = $(shell curl -s "${API_STATUS_META}" | jq -r '.trojan_ver')
 
-CMD      = /usr/bin/docker
+CMD      = docker
 IMAGE    = mogeko/trojan
 
 .PHONY: all build run test help
@@ -9,7 +10,7 @@ all: build run
 
 build:
 	@$(CMD) build . \
-	--build-arg TROJAN_VERSION=$(VERSION) \
+	--build-arg TROJAN_VERSION=$(TROJAN_VERSION) \
 	--tag $(IMAGE)
 
 run: id := $(shell head -200 /dev/urandom | cksum | cut -f1 -d " ")

@@ -24,7 +24,6 @@ jobs:
       trojan_ver: ${{ steps.check_ver.outputs.trojan_ver }}
       img_ver: ${{ steps.check_ver.outputs.img_ver }}
       is_new: ${{ steps.check_ver.outputs.is_new }}
-      is_meta_new: ${{ steps.check_ver.outputs.is_meta_new }}
       latest: ${{ steps.check_ver.outputs.latest }}
       edge: ${{ steps.check_ver.outputs.edge }}
       edge_sha: ${{ steps.check_ver.outputs.edge_sha }}
@@ -38,8 +37,8 @@ jobs:
       - name: Check version
         id: check_ver
         run: |
-          export STATUS_EDGE_SHA=3e7bb9aecdc694f9bcae8d646fae395f773d60f8
-          export STATUS_LATEST_SHA=8606b7110fe79f8ab02d60c897f87ffb0a9b23f0
+          export STATUS_EDGE_SHA=$(curl -s "${API_STATUS_META}" | jq -r '.edge.sha')
+          export STATUS_LATEST_SHA=$(curl -s "${API_STATUS_META}" | jq -r '.latest.sha')
           export TROJAN_VER=$(curl -s "${API_REPO_TAGS}" | jq -r '.[0].name')
           export EDGE_SHA=$(curl -s "${API_REPO_REFS}/heads/master" | jq -r '.object.sha')
           export LATEST_SHA=$(curl -s "${API_REPO_REFS}/tags/${TROJAN_VER}" | jq -r '.object.sha')
@@ -48,20 +47,17 @@ jobs:
           rm -rf ./public/index.json.template
           if [[ ! ${STATUS_EDGE_SHA} =~ ${EDGE_SHA} ]]; then
             echo "::set-output name=is_new::yes"
-            echo "::set-output name=is_meta_new::yes"
             echo "::set-output name=edge::type=edge"
             echo "::set-output name=edge_sha::type=raw,${EDGE_SHA:0:7}"
             echo "::set-output name=trojan_ver::master"
           fi
           if [[ ! ${STATUS_LATEST_SHA} =~ ${LATEST_SHA} ]]; then
             echo "::set-output name=is_new::yes"
-            echo "::set-output name=is_meta_new::yes"
             echo "::set-output name=latest::type=raw,latest"
             echo "::set-output name=img_ver::type=raw,${TROJAN_VER#v}"
             echo "::set-output name=latest_sha::type=raw,${LATEST_SHA:0:7}"
             echo "::set-output name=trojan_ver::${TROJAN_VER}"
           fi
-          echo "::set-output name=is_meta_new::yes"
         env:
           API_STATUS_META: ${{ steps.pages.outputs.base_url }}/index.json
           API_REPO_TAGS: https://api.github.com/repos/trojan-gfw/trojan/tags
@@ -72,7 +68,7 @@ jobs:
           path: ./public
 
   github-pages:
-    if: github.ref_name == 'master'
+    if: ${{ needs.check.outputs.is_new == 'yes' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
