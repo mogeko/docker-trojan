@@ -1,11 +1,15 @@
 {
   "name": "ghcr.io/mogeko/trojan",
   "trojan_ver": "${TROJAN_VER}",
+  "pkg_rel": ${PKG_REL},
   "edge": {
     "sha": "${EDGE_SHA}"
   },
   "latest": {
     "sha": "${LATEST_SHA}"
+  },
+  "dockerfile": {
+    "sha": "${DOCKERFILE_SHA}"
   },
   "timestamp": "${TIMESTAMP_UTC}"
 }

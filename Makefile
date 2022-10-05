@@ -1,4 +1,4 @@
-API_STATUS_META = https://mogeko.github.io/docker-trojan/
+API_STATUS_META = https://mogeko.github.io/docker-trojan/index.json
 TROJAN_VERSION  = $(shell curl -s "${API_STATUS_META}" | jq -r '.trojan_ver')
 
 CMD      = docker
