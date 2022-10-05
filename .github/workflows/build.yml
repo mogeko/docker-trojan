@@ -16,7 +16,7 @@ jobs:
           VERSION=$(jq -r '.version' ./latest.json)
           echo "::set-output name=version::${VERSION}"
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Build trojan image
         uses: docker/build-push-action@v3
         with:
