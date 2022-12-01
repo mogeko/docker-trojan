@@ -1,4 +1,4 @@
-FROM alpine:3.16.2 as trojan_builder
+FROM alpine:3.17.0 as trojan_builder
 
 RUN apk add --no-cache --virtual .build-deps \
         boost-build boost-dev build-base clang-dev cmake ninja \
@@ -18,7 +18,7 @@ RUN cmake . -DCMAKE_BUILD_TYPE=Release \
     && ninja -j$(nproc) \
     && ninja install
 
-FROM alpine:3.16.2 as ssl_maker
+FROM alpine:3.17.0 as ssl_maker
 
 RUN apk add --no-cache openssl
 
@@ -30,11 +30,11 @@ RUN openssl req  -nodes -new -x509 -days 3650 \
         -keyout private.key -out certificate.crt \
         -subj "/C=CN/ST=Beijing/L=Beijing/O=Trojan-Gfw/OU=Trojan-Gfw/CN=Trojan-Gfw"
 
-FROM alpine:3.16.2 as gettext
+FROM alpine:3.17.0 as gettext
 
 RUN apk add --no-cache gettext
 
-FROM alpine:3.16.2
+FROM alpine:3.17.0
 
 RUN apk add --no-cache --virtual .trojan-rundeps \
         libstdc++ boost-system boost-program_options mariadb-connector-c \
